@@ -1,17 +1,23 @@
 package com.developercat.firstapplication;
 
-public class NewsItem {
-    private int id;
-    private String title;
-    private String subTitle;
-    private String text;
-    private String image;
-    private String imageDescription;
-    private String time;
-    private String publisher;
+import com.orm.SugarRecord;
 
-    public NewsItem(int id, String title, String subTitle, String text, String image, String imageDescription, String time, String publisher) {
-        this.id = id;
+public class NewsItem extends SugarRecord<NewsItem> {
+    int newsId;
+    String title;
+    String subTitle;
+    String text;
+    String image;
+    String imageDescription;
+    String time;
+    String publisher;
+
+    public NewsItem() {
+
+    }
+
+    public NewsItem(int newsId, String title, String subTitle, String text, String image, String imageDescription, String time, String publisher) {
+        this.newsId = newsId;
         this.title = title;
         this.subTitle = subTitle;
         this.text = text;
@@ -20,14 +26,4 @@ public class NewsItem {
         this.time = time;
         this.publisher = publisher;
     }
-
-    public int getId() {return id;}
-    public String getImage() {return image;}
-    public String getTitle() {return title;}
-    public String getSubTitle() {return subTitle;}
-    public String getText() {return text;}
-    public String getImageDescription() {return imageDescription;}
-    public String getTime() {return time;}
-    public String getPublisher() {return publisher;}
-
 }

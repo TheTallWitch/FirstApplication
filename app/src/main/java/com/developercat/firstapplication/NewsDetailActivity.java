@@ -28,17 +28,16 @@ public class NewsDetailActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent != null) {
-            int id = intent.getIntExtra("id", 0);
-            DatabaseHelper databaseHelper = new DatabaseHelper(this);
-            NewsItem item = databaseHelper.getNewsItem(id);
+            long id = intent.getLongExtra("id", 0);
+            NewsItem item = NewsItem.findById(NewsItem.class, id);
 
-            Picasso.get().load(item.getImage()).into(newsImage);
-            newsTitle.setText(item.getTitle());
-            newsText.setText(item.getText());
-            newsSubTitle.setText(item.getSubTitle());
-            newsTime.setText(item.getTime());
-            newsPublisher.setText(item.getPublisher());
-            newsImageDescription.setText(item.getImageDescription());
+            Picasso.get().load(item.image).into(newsImage);
+            newsTitle.setText(item.title);
+            newsText.setText(item.text);
+            newsSubTitle.setText(item.subTitle);
+            newsTime.setText(item.time);
+            newsPublisher.setText(item.publisher);
+            newsImageDescription.setText(item.imageDescription);
         }
     }
 }

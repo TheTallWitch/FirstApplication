@@ -32,16 +32,12 @@ public class MainActivity extends AppCompatActivity {
 
     private List<NewsItem> newsItems = new ArrayList<>();
 
-    DatabaseHelper databaseHelper;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         newsList = findViewById(R.id.newsList);
-
-        databaseHelper = new DatabaseHelper(this);
 
         HttpGetRequest httpGetRequest = new HttpGetRequest();
         httpGetRequest.execute("http://www.hade3.com/_assets/news.aspx");
@@ -107,22 +103,24 @@ public class MainActivity extends AppCompatActivity {
             JSONArray objectList = new JSONArray(result);
             for (int i = 0; i < objectList.length(); i++) {
                 JSONObject item = objectList.getJSONObject(i);
-                newsItems.add(new NewsItem(item.getInt("id"), item.getString("title"), item.getString("subTitle"), item.getString("text"), item.getString("image"), item.getString("imageDesc"), item.getString("time"), item.getString("publisher")));
-                NewsItem newsItem = databaseHelper.getNewsItem(item.getInt("id"));
-                if (newsItem == null) {
-                    databaseHelper.insertNews(item.getInt("id"), item.getString("title"), item.getString("subTitle"), item.getString("text"), item.getString("image"), item.getString("imageDesc"), item.getString("time"), item.getString("publisher"));
+//                NewsItem newsItem = new NewsItem(item.getInt("id"), item.getString("title"), item.getString("subTitle"), item.getString("text"), item.getString("image"), item.getString("imageDesc"), item.getString("time"), item.getString("publisher"));
+//                newsItem.save();
+                if (item.getBoolean("updated")) {
+                    List<NewsItem> items = NewsItem.find(NewsItem.class, "NEWS_ID = ?", new String[] { String.valueOf(item.getInt("id")) });
+                    NewsItem newsItem = items.get(0);
+                    newsItem.title = item.getString("title");
+                    newsItem.subTitle = item.getString("subTitle");
+                    newsItem.text = item.getString("text");
+                    newsItem.image = item.getString("image");
+                    newsItem.imageDescription = item.getString("imageDesc");
+                    newsItem.time = item.getString("time");
+                    newsItem.publisher = item.getString("publisher");
+                    newsItem.save();
                 }
-                else {
-                    if (item.getBoolean("updated")) {
-                        boolean updated = databaseHelper.updateNews(item.getInt("id"), item.getString("title"), item.getString("subTitle"), item.getString("text"), item.getString("image"), item.getString("imageDesc"), item.getString("time"), item.getString("publisher"));
-                        if (updated) {
-                            Toast.makeText(this, "خبر " + item.getInt("id") + " به روز رسانی شد", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                    if (item.getBoolean("expired")) {
-                        int deleted = databaseHelper.deleteNews(item.getInt("id"));
-                        Toast.makeText(this, deleted + " خبر حذف شد", Toast.LENGTH_LONG).show();
-                    }
+                if (item.getBoolean("expired")) {
+                    List<NewsItem> items = NewsItem.find(NewsItem.class, "NEWS_ID = ?", new String[] { String.valueOf(item.getInt("id")) });
+                    NewsItem newsItem = items.get(0);
+                    newsItem.delete();
                 }
             }
 
@@ -134,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void ShowList() {
-        newsItems = databaseHelper.getAllNews();
+        newsItems = NewsItem.listAll(NewsItem.class);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         newsList.setLayoutManager(linearLayoutManager);

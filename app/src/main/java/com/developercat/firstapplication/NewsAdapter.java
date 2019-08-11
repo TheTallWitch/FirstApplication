@@ -33,10 +33,10 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int i) {
         NewsViewHolder viewHolder = (NewsViewHolder) holder;
         NewsItem item = mainItems.get(i);
-        Picasso.get().load(item.getImage()).into(viewHolder.image);
-        viewHolder.title.setText(item.getTitle());
-        viewHolder.text.setText(item.getText());
-        viewHolder.time.setText(item.getTime());
+        Picasso.get().load(item.image).into(viewHolder.image);
+        viewHolder.title.setText(item.title);
+        viewHolder.text.setText(item.text);
+        viewHolder.time.setText(item.time);
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
