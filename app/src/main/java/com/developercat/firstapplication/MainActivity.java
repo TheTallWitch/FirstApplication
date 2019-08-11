@@ -109,15 +109,21 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 0; i < objectList.length(); i++) {
                 JSONObject item = objectList.getJSONObject(i);
                 newsItems.add(new NewsItem(item.getInt("id"), item.getString("title"), item.getString("subTitle"), item.getString("text"), item.getString("image"), item.getString("imageDesc"), item.getString("time"), item.getString("publisher")));
-                if (item.getBoolean("updated")) {
-                    boolean updated = databaseHelper.updateNews(item.getInt("id"), item.getString("title"), item.getString("subTitle"), item.getString("text"), item.getString("image"), item.getString("imageDesc"), item.getString("time"), item.getString("publisher"));
-                    if (updated) {
-                        Toast.makeText(this, "خبر " + item.getInt("id") + " به روز رسانی شد", Toast.LENGTH_LONG).show();
-                    }
+                NewsItem newsItem = databaseHelper.getNewsItem(item.getInt("id"));
+                if (newsItem == null) {
+                    databaseHelper.insertNews(item.getInt("id"), item.getString("title"), item.getString("subTitle"), item.getString("text"), item.getString("image"), item.getString("imageDesc"), item.getString("time"), item.getString("publisher"));
                 }
-                if (item.getBoolean("expired")) {
-                    int deleted = databaseHelper.deleteNews(item.getInt("id"));
-                    Toast.makeText(this, deleted + " خبر حذف شد", Toast.LENGTH_LONG).show();
+                else {
+                    if (item.getBoolean("updated")) {
+                        boolean updated = databaseHelper.updateNews(item.getInt("id"), item.getString("title"), item.getString("subTitle"), item.getString("text"), item.getString("image"), item.getString("imageDesc"), item.getString("time"), item.getString("publisher"));
+                        if (updated) {
+                            Toast.makeText(this, "خبر " + item.getInt("id") + " به روز رسانی شد", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                    if (item.getBoolean("expired")) {
+                        int deleted = databaseHelper.deleteNews(item.getInt("id"));
+                        Toast.makeText(this, deleted + " خبر حذف شد", Toast.LENGTH_LONG).show();
+                    }
                 }
             }
 
