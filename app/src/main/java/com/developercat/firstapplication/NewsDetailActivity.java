@@ -13,6 +13,8 @@ public class NewsDetailActivity extends AppCompatActivity {
     TextView newsTitle, newsText, newsSubTitle, newsTime, newsPublisher, newsImageDescription;
     ImageView newsImage;
 
+    public static AppDatabase appDatabase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,10 +28,12 @@ public class NewsDetailActivity extends AppCompatActivity {
         newsPublisher = findViewById(R.id.newsPublisher);
         newsImageDescription = findViewById(R.id.newsImageDescription);
 
+        appDatabase = AppDatabase.getAppDatabase(this);
+
         Intent intent = getIntent();
         if (intent != null) {
-            long id = intent.getLongExtra("id", 0);
-            NewsItem item = NewsItem.findById(NewsItem.class, id);
+            int id = intent.getIntExtra("id", 0);
+            NewsItem item = appDatabase.newsDao().getNewsItem(id);
 
             Picasso.get().load(item.image).into(newsImage);
             newsTitle.setText(item.title);

@@ -32,12 +32,16 @@ public class MainActivity extends AppCompatActivity {
 
     private List<NewsItem> newsItems = new ArrayList<>();
 
+    public static AppDatabase appDatabase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         newsList = findViewById(R.id.newsList);
+
+        appDatabase = AppDatabase.getAppDatabase(this);
 
         HttpGetRequest httpGetRequest = new HttpGetRequest();
         httpGetRequest.execute("http://www.hade3.com/_assets/news.aspx");
@@ -103,24 +107,13 @@ public class MainActivity extends AppCompatActivity {
             JSONArray objectList = new JSONArray(result);
             for (int i = 0; i < objectList.length(); i++) {
                 JSONObject item = objectList.getJSONObject(i);
-//                NewsItem newsItem = new NewsItem(item.getInt("id"), item.getString("title"), item.getString("subTitle"), item.getString("text"), item.getString("image"), item.getString("imageDesc"), item.getString("time"), item.getString("publisher"));
-//                newsItem.save();
+                NewsItem newsItem = new NewsItem(item.getInt("id"), item.getString("title"), item.getString("subTitle"), item.getString("text"), item.getString("image"), item.getString("imageDesc"), item.getString("time"), item.getString("publisher"));
+                //appDatabase.newsDao().insertNews(newsItem);
                 if (item.getBoolean("updated")) {
-                    List<NewsItem> items = NewsItem.find(NewsItem.class, "NEWS_ID = ?", new String[] { String.valueOf(item.getInt("id")) });
-                    NewsItem newsItem = items.get(0);
-                    newsItem.title = item.getString("title");
-                    newsItem.subTitle = item.getString("subTitle");
-                    newsItem.text = item.getString("text");
-                    newsItem.image = item.getString("image");
-                    newsItem.imageDescription = item.getString("imageDesc");
-                    newsItem.time = item.getString("time");
-                    newsItem.publisher = item.getString("publisher");
-                    newsItem.save();
+                    appDatabase.newsDao().updateNews(newsItem);
                 }
                 if (item.getBoolean("expired")) {
-                    List<NewsItem> items = NewsItem.find(NewsItem.class, "NEWS_ID = ?", new String[] { String.valueOf(item.getInt("id")) });
-                    NewsItem newsItem = items.get(0);
-                    newsItem.delete();
+                    appDatabase.newsDao().deleteNews(newsItem);
                 }
             }
 
@@ -132,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void ShowList() {
-        newsItems = NewsItem.listAll(NewsItem.class);
+        newsItems = appDatabase.newsDao().getAll();
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         newsList.setLayoutManager(linearLayoutManager);
