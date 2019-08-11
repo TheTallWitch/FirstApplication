@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,15 +24,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String NEWS_PUBLISHER = "newsPublisher";
 
     public DatabaseHelper(Context context) {
-        //database gets created here
         super(context, DATABASE_NAME, null, 1);
-        //creates table, for first time only, calls the oncreate method
-        //SQLiteDatabase db = this.getWritableDatabase();
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        //we create table here
         db.execSQL("CREATE TABLE " + TABLE_NAME + " (" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + NEWS_ID + " INTEGER, " + NEWS_TITLE + " TEXT, " + NEWS_SUB_TITLE + " TEXT, " + NEWS_TEXT + " TEXT, " + NEWS_IMAGE + " TEXT, " + NEWS_IMAGE_DESC + " TEXT, " + NEWS_TIME + " TEXT, " + NEWS_PUBLISHER + " TEXT)");
     }
 
